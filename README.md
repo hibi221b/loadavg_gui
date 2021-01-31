@@ -2,7 +2,7 @@
 
 # how to use
 
-```console
+```terminal
 $ git clone https://github.com/hibi221b/loadavg_gui.git
 $ cd loadavg_gui
 $ cargo run
