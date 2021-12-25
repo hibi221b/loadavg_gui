@@ -1,4 +1,4 @@
-![load_avg](https://user-images.githubusercontent.com/29950288/106366279-18eac400-637e-11eb-8cd5-f18da1cd0d22.gif)
+https://user-images.githubusercontent.com/29950288/147376314-02f1b492-7e18-459f-bb13-d17c6063d526.mp4
 
 # how to use
 
