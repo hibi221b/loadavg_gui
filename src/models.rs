@@ -1,8 +1,6 @@
-pub trait GraphView<EnumMessage> 
-where 
-    EnumMessage: std::fmt::Debug + Clone + Copy
-{
+pub trait GraphView {
+    type Message;
     fn clear_canvas_cache(&mut self);
-    fn update(&mut self, msg: EnumMessage);
-    fn view(&mut self) -> iced::Element<EnumMessage>;
+    fn update(&mut self, msg: Self::Message);
+    fn view(&mut self) -> iced::Element<Self::Message>;
 }

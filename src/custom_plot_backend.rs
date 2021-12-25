@@ -1,7 +1,7 @@
 use iced::{Color, HorizontalAlignment, Point, Size, VerticalAlignment, canvas::{self, Path, Stroke}};
 
 use plotters_backend::{
-    DrawingBackend, DrawingErrorKind, BackendColor, BackendCoord, BackendStyle, BackendTextStyle
+    DrawingBackend, DrawingErrorKind, BackendColor, BackendCoord, BackendStyle, BackendTextStyle, text_anchor
 };
 
 use std::error::Error;
@@ -116,7 +116,7 @@ impl<'a> DrawingBackend for CustomPlotFrame<'a> {
         let path = Path::rectangle(Self::gen_bg_point(&upper_left), size);
 
         if fill {
-            self.frame.fill(&path, color);
+            self.frame.fill_rectangle(Self::gen_bg_point(&upper_left), size, color);
         } else {
             let stroke = Stroke {
                 color,
@@ -166,14 +166,26 @@ impl<'a> DrawingBackend for CustomPlotFrame<'a> {
     ) -> Result<(), DrawingErrorKind<Self::ErrorType>> {
         let color = Self::gen_bg_color(&style.color());
 
+        let horizontal_alignment = match style.anchor().h_pos {
+            text_anchor::HPos::Left => HorizontalAlignment::Left,
+            text_anchor::HPos::Right => HorizontalAlignment::Right,
+            text_anchor::HPos::Center => HorizontalAlignment::Center
+        };
+
+        let vertical_alignment = match style.anchor().v_pos {
+            text_anchor::VPos::Top => VerticalAlignment::Top,
+            text_anchor::VPos::Center => VerticalAlignment::Center,
+            text_anchor::VPos::Bottom => VerticalAlignment::Bottom
+        };
+
         self.frame.fill_text(
             iced::canvas::Text {
                 content: text.to_string(),
                 size: style.size() as f32,
                 position: Self::gen_bg_point(&pos),
                 color,
-                horizontal_alignment: HorizontalAlignment::Center,
-                vertical_alignment: VerticalAlignment::Center,
+                horizontal_alignment,
+                vertical_alignment,
                 ..iced::canvas::Text::default()
             }
         );

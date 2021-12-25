@@ -1,10 +1,14 @@
+use std::collections::VecDeque;
+
 use iced::{Canvas, Container, Element, Length, Rectangle, canvas::{self, Cache, Cursor, Geometry}};
 use plotters::{prelude::{ChartBuilder, IntoDrawingArea, LabelAreaPosition, LineSeries}, style::{BLUE, GREEN, RED}};
 
 use crate::{custom_plot_backend::{CustomPlotFrame, Plottable}};
 use crate::models;
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+const MAX_PLOT_SIZE: i32 = 200;
+
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct LoadAvgValue {
     one_m: f64,
     five_m: f64,
@@ -13,14 +17,20 @@ pub struct LoadAvgValue {
 
 struct Graph {
     cache: Cache,
-    load_avg: Vec<LoadAvgValue>
+    load_avg: VecDeque<LoadAvgValue>
 }
 
 impl Default for Graph {
     fn default() -> Self {
+        let mut v: VecDeque<LoadAvgValue> = VecDeque::new();
+
+        for _ in 0..MAX_PLOT_SIZE {
+            v.push_back(LoadAvgValue::default());
+        }
+
         Self {
             cache: Cache::new(),
-            load_avg: Vec::new()
+            load_avg: v
         }
     }
 }
@@ -44,7 +54,8 @@ impl LoadAvgView {
         let five_m = Self::round(load_avg.five, 100.0);
         let fifteen_m = Self::round(load_avg.fifteen, 100.0);
 
-        self.graph.load_avg.push(
+        self.graph.load_avg.pop_front();
+        self.graph.load_avg.push_back(
             LoadAvgValue {
                 one_m,
                 five_m,
@@ -54,15 +65,17 @@ impl LoadAvgView {
     }
 }
 
-impl models::GraphView<LoadAvgMessage> for LoadAvgView {
+impl models::GraphView for LoadAvgView {
+    type Message = LoadAvgMessage;
+    
     fn clear_canvas_cache(&mut self) {
         self.graph.cache.clear();
     }
 
-    fn update(&mut self, _msg: LoadAvgMessage) {
+    fn update(&mut self, _msg: Self::Message) {
     }
 
-    fn view(&mut self) -> Element<LoadAvgMessage> {
+    fn view(&mut self) -> Element<Self::Message> {
         let content = Canvas::new(&mut self.graph)
             .width(Length::Fill)
             .height(Length::Fill);
@@ -90,7 +103,7 @@ impl Plottable for Graph {
     fn draw_plot(&self, f: CustomPlotFrame) {
         let root_draw_area = f.into_drawing_area();
 
-        let y_spec_end = match self.load_avg.last()  {
+        let y_spec_end = match self.load_avg.back()  {
             Some(val) => val.one_m + 2.5,
             None => 1.0
         };
