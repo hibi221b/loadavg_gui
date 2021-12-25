@@ -1,4 +1,4 @@
-https://user-images.githubusercontent.com/29950288/147376314-02f1b492-7e18-459f-bb13-d17c6063d526.mp4
+![output](https://user-images.githubusercontent.com/29950288/147377173-b85c2255-b6ff-4f7a-a780-26e69d3cdb4f.gif)
 
 # how to use
 
