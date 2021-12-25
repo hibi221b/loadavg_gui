@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, vec};
 
 use iced::{Canvas, Container, Element, Length, Rectangle, canvas::{self, Cache, Cursor, Geometry}};
 use plotters::{prelude::{ChartBuilder, IntoDrawingArea, LabelAreaPosition, LineSeries}, style::{BLUE, GREEN, RED}};
@@ -6,7 +6,7 @@ use plotters::{prelude::{ChartBuilder, IntoDrawingArea, LabelAreaPosition, LineS
 use crate::{custom_plot_backend::{CustomPlotFrame, Plottable}};
 use crate::models;
 
-const MAX_PLOT_SIZE: i32 = 200;
+const MAX_PLOT_SIZE: usize = 200;
 
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct LoadAvgValue {
@@ -22,15 +22,9 @@ struct Graph {
 
 impl Default for Graph {
     fn default() -> Self {
-        let mut v: VecDeque<LoadAvgValue> = VecDeque::new();
-
-        for _ in 0..MAX_PLOT_SIZE {
-            v.push_back(LoadAvgValue::default());
-        }
-
         Self {
             cache: Cache::new(),
-            load_avg: v
+            load_avg: VecDeque::from(vec![LoadAvgValue::default(); MAX_PLOT_SIZE])
         }
     }
 }
