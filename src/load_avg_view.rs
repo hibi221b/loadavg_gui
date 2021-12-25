@@ -97,7 +97,7 @@ impl Plottable for Graph {
     fn draw_plot(&self, f: CustomPlotFrame) {
         let root_draw_area = f.into_drawing_area();
 
-        let y_spec_end = match self.load_avg.back()  {
+        let y_spec_end = match self.load_avg.get(self.load_avg.len() - 1)  {
             Some(val) => val.one_m + 2.5,
             None => 1.0
         };
@@ -110,15 +110,15 @@ impl Plottable for Graph {
             .caption("Load Average R - 1m / G - 5m / B - 15m", ("Arial",24))
             .set_label_area_size(LabelAreaPosition::Left, 20)
             // .set_label_area_size(LabelAreaPosition::Bottom, 20)
-            .build_cartesian_2d(0..self.load_avg.len(), 0.0..y_spec_end)
+            .build_cartesian_2d(0..(self.load_avg.len() - 1), 0.0..y_spec_end)
             .unwrap();
 
         ctx.configure_mesh().draw().unwrap();
 
         ctx.draw_series(
             LineSeries::new(
-                (0..).zip(self.load_avg.iter()).map(|(i, val)| {
-                    (i, val.one_m)
+                (0..).zip(self.load_avg.iter()).filter_map(|(i, val)| {
+                    if val.one_m != 0.0 { Some((i, val.one_m )) } else { None }
                 }),
                 &RED
             )
@@ -127,8 +127,8 @@ impl Plottable for Graph {
 
         ctx.draw_series(
             LineSeries::new(
-                (0..).zip(self.load_avg.iter()).map(|(i, val)| {
-                    (i, val.five_m)
+                (0..).zip(self.load_avg.iter()).filter_map(|(i, val)| {
+                    if val.five_m != 0.0 { Some((i, val.five_m) )} else { None }
                 }),
                 &GREEN
             )
@@ -137,8 +137,8 @@ impl Plottable for Graph {
 
         ctx.draw_series(
             LineSeries::new(
-                (0..).zip(self.load_avg.iter()).map(|(i, val)| {
-                    (i, val.fifteen_m)
+                (0..).zip(self.load_avg.iter()).filter_map(|(i, val)| {
+                    if val.fifteen_m != 0.0 { Some((i, val.fifteen_m) )} else { None }
                 }),
                 &BLUE
             )

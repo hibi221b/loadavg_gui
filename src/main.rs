@@ -2,7 +2,7 @@ mod custom_plot_backend;
 mod models;
 mod load_avg_view;
 
-use iced::{Application, Command, Container, Element, Length, Settings, Subscription, executor};
+use iced::{Application, Command, Container, Element, Length, Settings, Subscription, executor, Clipboard};
 use load_avg_view::{LoadAvgView, LoadAvgMessage};
 use models::GraphView;
 use sysinfo::SystemExt;
@@ -53,7 +53,7 @@ impl Application for App {
             })
     }
 
-    fn update(&mut self, message: Message) -> Command<Message> {
+    fn update(&mut self, message: Message, _clipboard: &mut Clipboard) -> Command<Message> {
         match message {
             Message::Tick(instant) => {
                 self.update_tick(&instant);
