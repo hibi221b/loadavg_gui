@@ -128,7 +128,7 @@ impl Plottable for Graph {
         ctx.draw_series(
             LineSeries::new(
                 (0..).zip(self.load_avg.iter()).filter_map(|(i, val)| {
-                    if val.five_m != 0.0 { Some((i, val.five_m) )} else { None }
+                    if val.five_m != 0.0 { Some((i, val.five_m)) } else { None }
                 }),
                 &GREEN
             )
@@ -138,7 +138,7 @@ impl Plottable for Graph {
         ctx.draw_series(
             LineSeries::new(
                 (0..).zip(self.load_avg.iter()).filter_map(|(i, val)| {
-                    if val.fifteen_m != 0.0 { Some((i, val.fifteen_m) )} else { None }
+                    if val.fifteen_m != 0.0 { Some((i, val.fifteen_m)) } else { None }
                 }),
                 &BLUE
             )
